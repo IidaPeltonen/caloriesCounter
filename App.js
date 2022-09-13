@@ -1,81 +1,93 @@
-import { Picker } from '@react-native/picker';
-import { useState } from 'react';
-import { TextInput } from 'react-native';
-import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
+import { StatusBar } from 'expo-status-bar'
+import { useState } from 'react'
+import { StyleSheet, Text, TextInput, View, Button } from 'react-native'
+import DropDownPicker from 'react-native-dropdown-picker'
 
-export default function App() {
-  const [weight, setWeight] = useState(0)
-  const [intensity, setIntensity] = useState(1.3)
-  const [gender, setGender] = useState('male')
-  const [calories, setCalories] = useState(0)
+//import { TextInput } from 'react-native';
+import RadioForm, {
+  RadioButton,
+  RadioButtonInput,
+  RadioButtonLabel
+} from 'react-native-simple-radio-button'
 
-  const intensities=Array()
-  intensities.push({label: 'light', value: 1.3})
-  intensities.push({label: 'usual', value: 1.5})
-  intensities.push({label: 'moderate', value: 1.7})
-  intensities.push({label: 'hard', value: 2})
-  intensities.push({label: 'very hard', value: 2.2})
-
+export default function App () {
   const genders = [
-    {label: 'Male', value: 'male'},
-    {label: 'Female', value: 'female'}
+    { label: 'Male', value: 'male' },
+    { label: 'Female', value: 'female' }
   ]
 
-  function calculate() {
-    let result = 0
-    if (gender==='male') {
-      result = (879 + 10.2 * weight) * intensity
-    }
-    else (
-      result = (795 + 7.18 * weight) * intensity
-    )
-    setCalories(result)
-  }
+  const [result, setResult] = useState(0);
+  const [weight, setWeight] = useState(0)
+  const [intensity, setIntensity] = useState(1.3)
+  const [isOpen, setIsOpen] = useState(false)
+  const [gender, setGender] = useState(genders[0].value)
+
+  const intensities = [
+    { label: 'Light', value: 1.3 },
+    { label: 'Usual', value: 1.5 },
+    { label: 'Moderate', value: 1.7 },
+    { label: 'Hard', value: 2 },
+    { label: 'Very hard', value: 2.2 }
+  ]
+
+   
+  function calculate(){
+    const res = gender==='male'?(879+10.2*weight)*intensity:(795+7.18*weight)*intensity;
+    setResult(res);
+}
 
   return (
     <View style={styles.container}>
       <View style={styles.field}>
-        <Text>Weight</Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={text => setWeight(text)}
-          placeholder="in kilograms"
-          keyboardType='numeric'>
-        </TextInput>
+      <Text>Weight</Text>
+      <TextInput
+        style={styles.input}
+        onChangeText={text => setWeight(text)}
+        placeholder="in kilograms"
+        keyboardType='number-pad'
+      ></TextInput>
       </View>
       <View style={styles.field}>
         <Text>Intensity</Text>
-        <Picker style={styles.intensity}
-          onValueChange={(itemValue) => setIntensity(itemValue)}
-          selectedValue={intensity}>
-            {intensities.map((intensity, index) => (
-              <Picker.Item key={index} label={intensity.label} value={intensity.value}/>
-            ))
-            }
-        </Picker>  
+        <DropDownPicker
+          items={intensities}
+          value={intensity}
+          open={isOpen}
+          setOpen={() => setIsOpen(prev => !prev)}
+          setValue={i => setIntensity(i)}
+        />
       </View>
       <View style={styles.field}>
         <Text>Gender</Text>
         <RadioForm
           style={styles.radio}
-          buttonSize= {10}
-          redio_props={genders}
+          buttonSize={10}
+          radio_props={genders}
           initial={0}
-          onPress={(value) => {setGender(value)}}/>
-          <Text>calories.toFixed(0)</Text>
+          onPress={value => {
+            setGender(value)
+          }}
+        />
+        <Text>Calories</Text> 
+        <Text>{result.toFixed(0)}</Text> 
       </View>
-      <Button onPress={calculate} title="Calculate"></Button>
+      <Button onPress={calculate} title='Calculate'></Button>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 30
+    paddingTop: 50,
+    paddingLeft: 20,
+    marginRight: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff'
   },
   field: {
-    margin:10
+    margin: 10
   },
   input: {
     marginLeft: 10
@@ -84,4 +96,4 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10
   }
-});
+})
