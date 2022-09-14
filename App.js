@@ -2,8 +2,6 @@ import { StatusBar } from 'expo-status-bar'
 import { useState } from 'react'
 import { StyleSheet, Text, TextInput, View, Button } from 'react-native'
 import DropDownPicker from 'react-native-dropdown-picker'
-
-//import { TextInput } from 'react-native';
 import RadioForm, {
   RadioButton,
   RadioButtonInput,
